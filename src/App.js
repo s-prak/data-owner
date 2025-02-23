@@ -1,31 +1,9 @@
 import './App.css';
 import api from './api/axiosConfig';
 import { useState } from 'react';
-
-// Reusable InputField component
-const InputField = ({ label, value, onChange, type = "text", required }) => (
-  <div className="input-field-container">
-    <label className="input-label">{label}</label>
-    <input
-      type={type}
-      value={value}
-      onChange={onChange}
-      className="input-field"
-      required={required}
-    />
-  </div>
-);
-
-// Reusable Button component
-const Button = ({ text, onClick, disabled }) => (
-  <button
-    onClick={onClick}
-    className="submit-button"
-    disabled={disabled}
-  >
-    {text}
-  </button>
-);
+import InputField from './components/InputField';
+import Button from './components/Button';
+import { encrypt } from './crypto/encrypt';
 
 function App() {
   const [document, setDocument] = useState("");
@@ -36,9 +14,12 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevents page reload
 
+    const encryptedDocument= encrypt(document);
+    const encryptedKeyword= encrypt(keyword);
+
     const postData = {
-      document: document,
-      keyword: keyword
+      document: encryptedDocument,
+      keyword: encryptedKeyword
     };
 
     setLoading(true);
