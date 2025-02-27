@@ -1,67 +1,20 @@
-import './App.css';
-import api from './api/axiosConfig';
-import { useState } from 'react';
-import InputField from './components/InputField';
-import Button from './components/Button';
-import { encrypt } from './crypto/encrypt';
+// src/App.js
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import UploadDocument from "./pages/UploadDocument";
+import Documents from "./pages/Documents";
 
 function App() {
-  const [document, setDocument] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(""); // For success/error messages
-
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevents page reload
-
-    const encryptedDocument= encrypt(document);
-    const encryptedKeyword= encrypt(keyword);
-
-    const postData = {
-      document: encryptedDocument,
-      keyword: encryptedKeyword
-    };
-
-    setLoading(true);
-    setMessage("");
-
-    try {
-      const response = await api.post("/DataOwner", postData);
-      console.log("Upload successful:", response.data);
-      setMessage("Document uploaded successfully!");
-    } catch (err) {
-      console.error("Error uploading document:", err);
-      setMessage("Error uploading document. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="App">
-      <h2>Upload Document</h2>
-      <form onSubmit={handleSubmit} className="form-container">
-        <InputField
-          label="Document"
-          value={document}
-          onChange={(e) => setDocument(e.target.value)}
-          required
-        />
-        <InputField
-          label="Keyword"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          required
-        />
-        <Button
-          text={loading ? "Uploading..." : "Upload"}
-          onClick={handleSubmit}
-          disabled={loading || !document || !keyword}
-        />
-      </form>
-
-      {message && <div className="message">{message}</div>}
-    </div>
+    <Router>
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<UploadDocument />} />
+          <Route path="/documents" element={<Documents />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
